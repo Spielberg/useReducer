@@ -40,6 +40,7 @@ function App() {
   const [tabValue, setTabValue] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    event.preventDefault();
     setTabValue(newValue);
   };
 
