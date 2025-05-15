@@ -1,45 +1,83 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { ThemeProvider } from '@mui/material/styles'
+import {
+  CssBaseline,
+  Container,
+  Box,
+  AppBar,
+  Toolbar,
+  Tabs,
+  Tab,
+} from '@mui/material'
+import theme from './theme'
 import './App.css'
+import Form from './components/form'
+import { useStateHandler } from './hooks/useStateHandler'
+import { useStateHandlerObject } from './hooks/useStateHandlerObject'
+import { useReducerHandler } from './hooks/useReducerHandler'
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6 flex flex-col justify-center sm:py-12">
-      <div className="relative py-3 sm:max-w-xl sm:mx-auto">
-        <div className="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-          <div className="max-w-md mx-auto">
-            <div className="flex items-center space-x-5">
-              <a href="https://vite.dev" target="_blank" className="hover:scale-110 transition-transform">
-                <img src={viteLogo} className="h-12 w-12" alt="Vite logo" />
-              </a>
-              <a href="https://react.dev" target="_blank" className="hover:scale-110 transition-transform">
-                <img src={reactLogo} className="h-12 w-12 animate-spin-slow" alt="React logo" />
-              </a>
-            </div>
-            <div className="divide-y divide-gray-200">
-              <div className="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
-                <h1 className="text-3xl font-bold text-center mb-8">Vite + React</h1>
-                <div className="text-center">
-                  <button
-                    onClick={() => setCount((count) => count + 1)}
-                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                  >
-                    count is {count}
-                  </button>
-                  <p className="mt-4">
-                    Edit <code className="bg-gray-100 px-2 py-1 rounded">src/App.tsx</code> and save to test HMR
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AppBar position="fixed" elevation={0} sx={{ borderBottom: '1px solid #e5e7eb', width: '100vw', left: 0 }}>
+        <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 1, sm: 3 }, maxWidth: '1200px', width: '100%', mx: 'auto' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }} />
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            aria-label="navigation tabs"
+            textColor="primary"
+            indicatorColor="primary"
+            sx={{ minHeight: 64 }}
+          >
+            <Tab label="useState" />
+            <Tab label="useReducer" />
+            <Tab label="useStateObject" />
+          </Tabs>
+        </Toolbar>
+      </AppBar>
+      <Box sx={{ pt: '80px', minHeight: '100vh', background: theme.palette.background.default }}>
+        <Container sx={{ mt: 2 }}>
+          <TabPanel value={tabValue} index={0}>
+            <Form title="useState" hook={useStateHandler()} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={1}>
+            <Form title="useReducer" hook={useReducerHandler()} />
+          </TabPanel>
+          <TabPanel value={tabValue} index={2}>
+            <Form title="useStateObject" hook={useStateHandlerObject()} />
+          </TabPanel>
+        </Container>
+      </Box>
+    </ThemeProvider>
   )
 }
 
-export default App
+export default App;
